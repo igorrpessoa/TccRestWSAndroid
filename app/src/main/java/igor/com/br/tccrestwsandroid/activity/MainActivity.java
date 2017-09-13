@@ -61,7 +61,7 @@ public class MainActivity extends BaseActivity {
 
     public void configuraAdapter(){
         List<Atividade> listaAtividadesSugeridas = new ArrayList<>();
-        listaAtividadesSugeridas.add(new Atividade(0,"Futebol",null));
+        listaAtividadesSugeridas.add(new Atividade(0,"Futebol"));
         atividadesSugeridasAdapter = new AtividadesSugeridasAdapter(mContext,listaAtividadesSugeridas);
         listViewAtividadesSugeridas.setAdapter(atividadesSugeridasAdapter);
     }

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="igor.com.br.tccrestwsandroid.activity.CadastroActivity"
+    tools:showIn="@layout/activity_cadastro">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/linear_pergunta"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/relative_botoes"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="40dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/lbl_pergunta"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:gravity="center_horizontal"
+                    android:text="Pergunta aqui"
+                    android:textSize="26sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/linear_radio"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <RadioButton
+                            android:id="@+id/radio_sim"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="20dp"
+                            android:layout_weight="1"
+                            android:max="10"
+                            android:text="Sim" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <RadioButton
+                            android:id="@+id/radio_talvez"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="20dp"
+                            android:layout_weight="1"
+                            android:text="talvez" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <RadioButton
+                            android:id="@+id/radio_nao"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="20dp"
+                            android:layout_weight="1"
+                            android:text="Não" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_social"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <SeekBar
+                        android:id="@+id/seekBar_social"
+                        style="@style/Widget.AppCompat.SeekBar.Discrete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="10"
+                        android:progress="1" />
+
+                    <TextView
+                        android:id="@+id/lbl_numero_pessoas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="5 Pessoas"
+                        android:textSize="24sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_satisfacao"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <SeekBar
+                        android:id="@+id/seekBar_satisfacao"
+                        style="@style/Widget.AppCompat.SeekBar.Discrete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:progress="1" />
+                    <TextView
+                        android:id="@+id/lbl_satisfacao"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="0/100"
+                        android:textSize="24sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_frequencia"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <SeekBar
+                        android:id="@+id/seekBar_frequencia"
+                        style="@style/Widget.AppCompat.SeekBar.Discrete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="30"
+                        android:progress="1" />
+
+                    <TextView
+                        android:id="@+id/lbl_numero_dias"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="5x por Mês"
+                        android:textSize="24sp" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/linear_fisica"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <SeekBar
+                        android:id="@+id/seekBar_fisica"
+                        style="@style/Widget.AppCompat.SeekBar.Discrete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="90"
+                        android:progress="1" />
+
+                    <TextView
+                        android:id="@+id/lbl_fisica_minutos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="0 minutos"
+                        android:textSize="24sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RadioButton
+                                android:id="@+id/radio_vigorosa"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="20dp"
+                                android:layout_weight="1"
+                                android:text="Vigorosa" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RadioButton
+                                android:id="@+id/radio_moderada"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="20dp"
+                                android:layout_weight="1"
+                                android:text="Moderada" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RadioButton
+                                android:id="@+id/radio_natural"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="20dp"
+                                android:layout_weight="1"
+                                android:max="10"
+                                android:text="Natural" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative_botoes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="25dp"
+            android:layout_above="@+id/linearLayout">
+
+            <Button
+                android:id="@+id/btn_esquerda"
+                android:layout_width="75dp"
+                android:layout_height="60dp"
+                android:background="@color/colorPrimaryAlpha"
+                android:text="&lt;"
+                android:textSize="32sp" />
+
+            <Button
+                android:id="@+id/btn_direita"
+                android:layout_width="75dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:background="@color/colorPrimaryAlpha"
+                android:text="&gt;"
+                android:textSize="32sp" />
+
+            <Button
+                android:id="@+id/btn_finalizar"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:background="@color/colorPrimaryAlpha"
+                android:text="Finalizar"
+                android:visibility="gone"
+                android:textSize="32sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/lbl_paginas"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"
+                android:fontFamily="sans-serif-smallcaps"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="2/12"
+                android:textColor="@android:color/background_light"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

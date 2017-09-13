@@ -20,4 +20,7 @@ public interface AtividadeInterface {
     @POST("AtividadeService/selectAllAtividade")
     Call<List<Atividade>> selectAllAtividade(@Body Usuario user);
 
+    @POST("AtividadeService/salvarAtividade")
+    Call<Atividade> salvarAtividade(@Body UsuarioAtividade usuarioAtividade);
+
 }

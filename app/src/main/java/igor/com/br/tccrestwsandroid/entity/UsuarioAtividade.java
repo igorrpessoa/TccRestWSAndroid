@@ -17,7 +17,7 @@ public class UsuarioAtividade {
 	private Atividade atividade;
 	private Double frequencia;
 	private Double satisfacao;
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -48,6 +48,4 @@ public class UsuarioAtividade {
 	public void setSatisfacao(Double satisfacao) {
 		this.satisfacao = satisfacao;
 	}
-
-	
 }

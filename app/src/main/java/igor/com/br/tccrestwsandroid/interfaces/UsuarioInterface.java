@@ -2,6 +2,7 @@ package igor.com.br.tccrestwsandroid.interfaces;
 
 
 import igor.com.br.tccrestwsandroid.entity.Usuario;
+import igor.com.br.tccrestwsandroid.entity.UsuarioAtividade;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -20,4 +21,7 @@ public interface UsuarioInterface {
 
     @POST("UsuarioService/login")
     Call<Usuario> login(@Body Usuario usuario);
+
+    @POST("UsuarioService/fuzzyficar")
+    Call<Usuario> fuzzyficar(@Body UsuarioAtividade usuario);
 }

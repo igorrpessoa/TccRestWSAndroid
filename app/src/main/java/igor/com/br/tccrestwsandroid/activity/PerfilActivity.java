@@ -14,6 +14,7 @@ import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.data.RadarEntry;
@@ -85,9 +86,11 @@ public class PerfilActivity extends BaseActivity {
 
         XAxis xAxis = mChart.getXAxis();
 //        xAxis.setTypeface(mTfLight);
-        xAxis.setTextSize(9f);
-        xAxis.setYOffset(0f);
-        xAxis.setXOffset(0f);
+        xAxis.setTextSize(10f);
+        xAxis.setAxisMinimum(0f);
+        xAxis.setAxisMaximum(3f);
+//        xAxis.setYOffset(0f);
+//        xAxis.setXOffset(0f);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
 
             private String[] mActivities = new String[]{"Artistico", "Intelecto", "Social", "Saude"};
@@ -98,14 +101,16 @@ public class PerfilActivity extends BaseActivity {
             }
         });
         xAxis.setTextColor(Color.BLACK);
+        xAxis.setGranularity(1f);
 
-//        YAxis yAxis = mChart.getYAxis();
-////        yAxis.setTypeface(mTfLight);
+        YAxis yAxis = mChart.getYAxis();
+//        yAxis.setTypeface(mTfLight);
 //        yAxis.setLabelCount(4, false);
 //        yAxis.setTextSize(9f);
-//        yAxis.setAxisMinimum(0f);
-//        yAxis.setAxisMaximum(80f);
+        yAxis.setAxisMinimum(0f);
+        yAxis.setAxisMaximum(3f);
 //        yAxis.setDrawLabels(false);
+        yAxis.setGranularity(1f);
 
         Legend l = mChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -113,8 +118,8 @@ public class PerfilActivity extends BaseActivity {
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
 //        l.setTypeface(mTfLight);
-        l.setXEntrySpace(7f);
-        l.setYEntrySpace(5f);
+//        l.setXEntrySpace(7f);
+//        l.setYEntrySpace(5f);
         l.setTextColor(Color.BLACK);
 
 

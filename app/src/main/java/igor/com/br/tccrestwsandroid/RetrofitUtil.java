@@ -26,7 +26,4 @@ public class RetrofitUtil {
                 .build();
         return retrofit;
     }
-
-
-
 }

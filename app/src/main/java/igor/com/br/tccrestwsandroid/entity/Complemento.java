@@ -1,9 +1,9 @@
 package igor.com.br.tccrestwsandroid.entity;
 
-public class Atividade {
+public class Complemento {
 
-	public Atividade(){}
-	public Atividade(int id, String nome) {
+	public Complemento(){}
+	public Complemento(int id, String nome) {
 		super();
 		this.id = id;
 		this.nome = nome;

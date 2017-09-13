@@ -21,8 +21,8 @@ import butterknife.OnItemClick;
 import igor.com.br.tccrestwsandroid.R;
 import igor.com.br.tccrestwsandroid.RetrofitUtil;
 import igor.com.br.tccrestwsandroid.adapter.AtividadesAdapter;
-import igor.com.br.tccrestwsandroid.adapter.AtividadesSugeridasAdapter;
 import igor.com.br.tccrestwsandroid.entity.Atividade;
+import igor.com.br.tccrestwsandroid.entity.Complemento;
 import igor.com.br.tccrestwsandroid.entity.Perfil;
 import igor.com.br.tccrestwsandroid.entity.Usuario;
 import igor.com.br.tccrestwsandroid.entity.UsuarioAtividade;
@@ -41,9 +41,16 @@ public class AtividadesActivity extends BaseActivity {
     public ListView listViewAtividades;
     @BindView(R.id.btn_criar_atividade)
     public Button btn_criar_atividade;
+
+    @BindView(R.id.edit_atividade)
+    public EditText editAtividade;
+    @BindView(R.id.edit_complemento)
+    public EditText editComplemento;
+
     private List<Atividade> listaAtividades = new ArrayList<>();
 
     private Atividade atividadeSelecionada = null;
+    private Complemento complementoSelecionado = null;
     private Retrofit retrofit;
     private Context mContext;
     private Usuario usuarioLogado;
@@ -61,22 +68,9 @@ public class AtividadesActivity extends BaseActivity {
         listarAtividades();
     }
 
-
-
-    public void configuraAdapter(List<Atividade> atividades){
-        for(Atividade a : atividades)listaAtividades.add(new Atividade(0,a.getNome(),null));
-
-        atividadesAdapter = new AtividadesAdapter(mContext,listaAtividades);
-        listViewAtividades.setAdapter(atividadesAdapter);
-    }
-
-    public void setAtividadeSelecionada(int id){
-        atividadeSelecionada = listaAtividades.get(id);
-    }
-
     public void listarAtividades(){
-        AtividadeInterface i  = retrofit.create(AtividadeInterface.class);
-        Call<List<Atividade>> call = i.selectAllAtividade(usuarioLogado);
+        UsuarioAtividadeInterface i  = retrofit.create(UsuarioAtividadeInterface.class);
+        Call<List<Atividade>> call = i.selectAllUsuarioAtividade(usuarioLogado);
         dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
         call.enqueue(new Callback<List<Atividade>>() {
             @Override
@@ -93,21 +87,41 @@ public class AtividadesActivity extends BaseActivity {
             public void onFailure(Call<List<Atividade>> call, Throwable t) {
                 dialog.dismiss();
                 Toast.makeText(AtividadesActivity.this, "Não foi possível acessar o servidor. Verifique sua internet", Toast.LENGTH_SHORT).show();
-
-                final List<Atividade> atividades = new ArrayList<Atividade>();
-                atividades.add(new Atividade(0,"Esporte",null));
-                configuraAdapter(atividades);
             }
         });
     }
 
+    public void configuraAdapter(List<Atividade> atividades){
+        if(atividades != null) {
+            for (Atividade a : atividades)
+                listaAtividades.add(new Atividade(0, a.getNome()));
+
+            atividadesAdapter = new AtividadesAdapter(mContext, listaAtividades);
+            listViewAtividades.setAdapter(atividadesAdapter);
+        }
+    }
+
     @OnClick(R.id.btn_criar_atividade)
     public void clickBtnFuzzyficar(){
+        if(atividadeSelecionada == null){
+            if (editAtividade.getText().length() > 0) {
+                atividadeSelecionada = new Atividade();
+                atividadeSelecionada.setNome(editAtividade.getText().toString());
+            }
+            if (editComplemento.getText().length() > 0) {
+                complementoSelecionado = new Complemento();
+                complementoSelecionado.setNome(editComplemento.getText().toString());
+            }
+        }
         if(atividadeSelecionada != null){
             Intent intent = new Intent(mContext,CadastroActivity.class);
             intent.putExtra("AtividadeSelecionada",new Gson().toJson(atividadeSelecionada));
+            intent.putExtra("ComplementoSelecionado",new Gson().toJson(complementoSelecionado));
             startActivity(intent);
-
         }
+    }
+
+    public void setAtividadeSelecionada(int id) {
+        this.atividadeSelecionada = listaAtividades.get(id);
     }
 }
