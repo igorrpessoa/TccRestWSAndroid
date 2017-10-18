@@ -7,6 +7,7 @@ import igor.com.br.tccrestwsandroid.entity.Atividade;
 import igor.com.br.tccrestwsandroid.entity.Perfil;
 import igor.com.br.tccrestwsandroid.entity.Usuario;
 import igor.com.br.tccrestwsandroid.entity.UsuarioAtividade;
+import igor.com.br.tccrestwsandroid.vo.AtividadeVo;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -17,10 +18,15 @@ import retrofit2.http.POST;
 
 public interface AtividadeInterface {
 
-    @POST("AtividadeService/selectAllAtividade")
-    Call<List<Atividade>> selectAllAtividade(@Body Usuario user);
+    @POST("AtividadeService/sugestaoAtividade")
+    Call<AtividadeVo> sugestaoAtividade(@Body Usuario user);
 
     @POST("AtividadeService/salvarAtividade")
     Call<Atividade> salvarAtividade(@Body UsuarioAtividade usuarioAtividade);
 
+    @POST("AtividadeService/buscaAtividade")
+    Call<AtividadeVo> buscaAtividade(@Body AtividadeVo atividade);
+
+    @POST("AtividadeService/selectAtividades")
+    Call<List<AtividadeVo>> selecionaAtividades(@Body AtividadeVo atividade);
 }

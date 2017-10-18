@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="igor.com.br.tccrestwsandroid.activity.LoginActivity"
-    tools:showIn="@layout/activity_login">
+    tools:context="igor.com.br.tccrestwsandroid.activity.CadastroLoginActivity"
+    tools:showIn="@layout/activity_cadastro_login">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             android:layout_marginTop="40dp"
             android:fontFamily="sans-serif-smallcaps"
             android:gravity="center_horizontal"
-            android:text="@string/login"
+            android:text="@string/cadastro_de_usuario"
             android:textSize="32sp" />
 
         <LinearLayout
@@ -38,12 +38,23 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="60dp"
-                    android:layout_height="50dp"
+                <EditText
+                    android:id="@+id/edit_text_nome"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_margin="15dp"
                     android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_person_black_24dp" />
+                    android:background="@drawable/edit_text_border"
+                    android:hint="Nome"
+                    android:inputType="textEmailAddress"
+                    android:paddingLeft="15dp"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/edit_text_email"
@@ -63,13 +74,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/imageView4"
-                    android:layout_width="60dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_vpn_key_black_24dp" />
-
                 <EditText
                     android:id="@+id/edit_text_password"
                     android:layout_width="match_parent"
@@ -84,21 +88,12 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btn_login"
+                android:id="@+id/btn_cadastrar"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="30dp"
                 android:background="@color/colorPrimaryAlpha"
-                android:text="Login" />
-
-            <TextView
-                android:id="@+id/text_cadastro"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:gravity="center_horizontal"
-                android:text="Não possui conta? Clique aqui e faça o Cadastro"
-                android:textSize="18sp" />
+                android:text="Cadastrar" />
         </LinearLayout>
     </LinearLayout>
 

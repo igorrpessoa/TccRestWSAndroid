@@ -6,5 +6,6 @@
 
     <string name="login">Login</string>
     <string name="senha">Senha</string>
+    <string name="cadastro_de_usuario">Cadastro de Usuário</string>
 
 </resources>

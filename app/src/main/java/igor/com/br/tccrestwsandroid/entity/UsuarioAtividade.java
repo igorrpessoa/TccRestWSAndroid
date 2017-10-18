@@ -17,6 +17,7 @@ public class UsuarioAtividade {
 	private Atividade atividade;
 	private Double frequencia;
 	private Double satisfacao;
+	private Perfil perfil;
 
 	public Integer getId() {
 		return id;
@@ -48,4 +49,12 @@ public class UsuarioAtividade {
 	public void setSatisfacao(Double satisfacao) {
 		this.satisfacao = satisfacao;
 	}
+	public Perfil getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(Perfil perfil) {
+		this.perfil = perfil;
+	}
+
 }

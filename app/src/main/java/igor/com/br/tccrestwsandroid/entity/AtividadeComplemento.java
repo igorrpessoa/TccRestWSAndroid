@@ -1,5 +1,7 @@
 package igor.com.br.tccrestwsandroid.entity;
 
+import java.util.List;
+
 public class AtividadeComplemento {
 
 	public AtividadeComplemento(){}
@@ -9,7 +11,7 @@ public class AtividadeComplemento {
 	}
 	private Integer id;
 	private Atividade atividade;
-	private Complemento complemento;
+	private List<Complemento> complemento;
 
 	public Integer getId() {
 		return id;
@@ -26,11 +28,11 @@ public class AtividadeComplemento {
 		this.atividade = atividade;
 	}
 
-	public Complemento getComplemento() {
+	public List<Complemento> getComplemento() {
 		return complemento;
 	}
 
-	public void setComplemento(Complemento complemento) {
+	public void setComplemento(List<Complemento> complemento) {
 		this.complemento = complemento;
 	}
 }

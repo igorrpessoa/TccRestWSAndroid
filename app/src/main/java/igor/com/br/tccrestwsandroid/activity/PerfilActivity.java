@@ -73,9 +73,9 @@ public class PerfilActivity extends BaseActivity {
         mChart.getDescription().setEnabled(false);
 
         mChart.setWebLineWidth(1f);
-        mChart.setWebColor(Color.RED);
+            mChart.setWebColor(Color.BLUE);
         mChart.setWebLineWidthInner(1f);
-        mChart.setWebColorInner(Color.RED);
+        mChart.setWebColorInner(Color.BLUE);
         mChart.setWebAlpha(100);
 
         // create a custom MarkerView (extend MarkerView) and specify the layout
@@ -88,7 +88,7 @@ public class PerfilActivity extends BaseActivity {
 //        xAxis.setTypeface(mTfLight);
         xAxis.setTextSize(10f);
         xAxis.setAxisMinimum(0f);
-        xAxis.setAxisMaximum(3f);
+        xAxis.setAxisMaximum(80f);
 //        xAxis.setYOffset(0f);
 //        xAxis.setXOffset(0f);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
@@ -108,9 +108,9 @@ public class PerfilActivity extends BaseActivity {
 //        yAxis.setLabelCount(4, false);
 //        yAxis.setTextSize(9f);
         yAxis.setAxisMinimum(0f);
-        yAxis.setAxisMaximum(3f);
+        yAxis.setAxisMaximum(80f);
 //        yAxis.setDrawLabels(false);
-        yAxis.setGranularity(1f);
+        yAxis.setGranularity(10f);
 
         Legend l = mChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);

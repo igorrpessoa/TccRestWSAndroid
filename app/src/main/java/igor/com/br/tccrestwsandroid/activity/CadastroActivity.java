@@ -3,11 +3,8 @@ package igor.com.br.tccrestwsandroid.activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -15,21 +12,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.RadarChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.MarkerView;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.RadarData;
-import com.github.mikephil.charting.data.RadarDataSet;
-import com.github.mikephil.charting.data.RadarEntry;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.IRadarDataSet;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,20 +22,16 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemSelected;
-import igor.com.br.tccrestwsandroid.AuxiliaryFuzzyfication;
+import igor.com.br.tccrestwsandroid.vo.FuzzyficationVo;
 import igor.com.br.tccrestwsandroid.Constantes;
 import igor.com.br.tccrestwsandroid.R;
 import igor.com.br.tccrestwsandroid.RetrofitUtil;
-import igor.com.br.tccrestwsandroid.custom.RadarMarkerView;
 import igor.com.br.tccrestwsandroid.entity.Atividade;
 import igor.com.br.tccrestwsandroid.entity.Complemento;
 import igor.com.br.tccrestwsandroid.entity.Perfil;
 import igor.com.br.tccrestwsandroid.entity.Usuario;
 import igor.com.br.tccrestwsandroid.entity.UsuarioAtividade;
-import igor.com.br.tccrestwsandroid.interfaces.AtividadeInterface;
 import igor.com.br.tccrestwsandroid.interfaces.UsuarioAtividadeInterface;
-import igor.com.br.tccrestwsandroid.interfaces.UsuarioInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,7 +47,7 @@ public class CadastroActivity extends BaseActivity {
 
     private Usuario usuarioLogado;
     private Atividade atividadeSelecionada = null;
-    private Complemento complementoSelecionado = null;
+    private List<Complemento> complementosSelecionados = null;
     private Map<Integer,String> resposta = new HashMap();
     private Perfil perfil;
     private UsuarioAtividade usuarioAtividade;
@@ -151,7 +132,7 @@ public class CadastroActivity extends BaseActivity {
         }
         if(bundle.getString("ComplementoSelecionado") != null) {
             String json = bundle.getString("ComplementoSelecionado");
-            complementoSelecionado = new Gson().fromJson(json, Complemento.class);
+            complementosSelecionados = new Gson().fromJson(json, new TypeToken<List<Complemento>>(){}.getType());
         }
         inicializa();
         usuarioAtividade = new UsuarioAtividade();
@@ -250,7 +231,11 @@ public class CadastroActivity extends BaseActivity {
         seekBarFisica.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                lblFisicaMinutos.setText(progress + " minutos");
+                if(progress >= 75){
+                    lblFisicaMinutos.setText("mais de " + progress + " minutos");
+                }else{
+                    lblFisicaMinutos.setText(progress + " minutos");
+                }
             }
 
             @Override
@@ -288,7 +273,7 @@ public class CadastroActivity extends BaseActivity {
     @OnClick(R.id.btn_esquerda)
     public void setBtnEsquerda(){
         indexPergunta--;
-        //em caso de não ser esporte, retorna mais uma pergunta
+        //em caso de não seja esporte, retorna mais uma pergunta
         if(indexPergunta == Constantes.Perguntas.SAUDE1.getValor() && resposta.get(indexPergunta).equals("N")){
             indexPergunta--;
         }
@@ -309,25 +294,29 @@ public class CadastroActivity extends BaseActivity {
         retrofit = new RetrofitUtil().createRetrofit();
         UsuarioAtividadeInterface i  = retrofit.create(UsuarioAtividadeInterface.class);
         usuarioAtividade.setUsuario(usuarioLogado);
+        usuarioAtividade.setPerfil(perfil);
         usuarioAtividade.setAtividade(atividadeSelecionada);
-        AuxiliaryFuzzyfication fuzzy = new AuxiliaryFuzzyfication();
+        FuzzyficationVo fuzzy = new FuzzyficationVo();
         fuzzy.setUsuarioAtividade(usuarioAtividade);
-        List<Complemento> complementoList = new ArrayList<>();
-        complementoList.add(complementoSelecionado);
-        fuzzy.setComplementos(complementoList);
-        Call<Perfil> call = i.fuzzyficar(fuzzy);
+        fuzzy.setComplementos(complementosSelecionados);
+        Call<Usuario> call = i.fuzzyficar(fuzzy);
         dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
-        call.enqueue(new Callback<Perfil>() {
+        call.enqueue(new Callback<Usuario>() {
             @Override
-            public void onResponse(Call<Perfil> call, Response<Perfil> response) {
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 dialog.dismiss();
                 if(response!= null){
-
+                    usuarioLogado = response.body();
+                    Intent intent = new Intent(mContext,MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    setSharedPreferences(mContext,mContext.getString(R.string.usuario_logado),new Gson().toJson(usuarioLogado));
+                    startActivity(intent);
                 }
             }
 
             @Override
-            public void onFailure(Call<Perfil> call, Throwable t) {
+            public void onFailure(Call<Usuario> call, Throwable t) {
                 Toast.makeText(CadastroActivity.this, "Não foi possível acessar o servidor. Verifique sua internet", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
@@ -398,10 +387,15 @@ public class CadastroActivity extends BaseActivity {
            double pontos=0;
            if(indexPergunta == Constantes.Perguntas.SAUDE2.getValor()){
                pontos = seekBarFisica.getProgress();
+               //para atividade moderada
                if(radioModerada.isChecked()){
                    pontos = pontos/2;
+                   //para atividade natural
                }else if(radioNatural.isChecked()){
                    pontos = pontos/3;
+               }
+               if(pontos>=25){
+                   pontos = 25;
                }
                resposta.put(indexPergunta,radioModerada.isChecked() ? "Moderada" + pontos : radioNatural.isChecked()? "Natural" + pontos: "Vigorosa"+ pontos);
            }else if(indexPergunta > Constantes.Perguntas.SAUDE2.getValor()) {

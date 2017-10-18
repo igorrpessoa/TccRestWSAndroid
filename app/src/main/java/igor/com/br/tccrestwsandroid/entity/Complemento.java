@@ -3,13 +3,13 @@ package igor.com.br.tccrestwsandroid.entity;
 public class Complemento {
 
 	public Complemento(){}
-	public Complemento(int id, String nome) {
+	public Complemento(String nome) {
 		super();
-		this.id = id;
 		this.nome = nome;
 	}
 	private Integer id;
 	private String nome;
+	private Integer valido;
 
 	public Integer getId() {
 		return id;
@@ -23,5 +23,12 @@ public class Complemento {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
+
+	public Integer getValido() {
+		return valido;
+	}
+
+	public void setValido(Integer valido) {
+		this.valido = valido;
+	}
 }

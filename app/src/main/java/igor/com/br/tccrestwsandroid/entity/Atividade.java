@@ -10,6 +10,7 @@ public class Atividade {
 	}
 	private Integer id;
 	private String nome;
+	private Integer valido;
 
 	public Integer getId() {
 		return id;
@@ -23,5 +24,11 @@ public class Atividade {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
+	public Integer getValido() {
+		return valido;
+	}
+	public void setValido(Integer valido) {
+		this.valido = valido;
+	}
+
 }

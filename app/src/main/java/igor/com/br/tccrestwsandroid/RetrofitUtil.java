@@ -15,8 +15,8 @@ public class RetrofitUtil {
 
     public Retrofit createRetrofit(){
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-        .readTimeout(10, TimeUnit.SECONDS)
-        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(30, TimeUnit.SECONDS)
                 .build();
         // Trailing slash is needed
         Retrofit retrofit = new Retrofit.Builder()

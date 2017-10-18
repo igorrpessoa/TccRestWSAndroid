@@ -1,4 +1,4 @@
-package igor.com.br.tccrestwsandroid;
+package igor.com.br.tccrestwsandroid.vo;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import igor.com.br.tccrestwsandroid.entity.UsuarioAtividade;
  * Created by Igor on 10/09/2017.
  */
 
-public class AuxiliaryFuzzyfication {
+public class FuzzyficationVo {
     private UsuarioAtividade usuarioAtividade;
     private List<Complemento> complementos;
 

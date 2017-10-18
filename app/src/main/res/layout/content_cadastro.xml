@@ -113,6 +113,8 @@
                         style="@style/Widget.AppCompat.SeekBar.Discrete"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
                         android:layout_weight="1"
                         android:max="10"
                         android:progress="1" />
@@ -140,6 +142,8 @@
                         style="@style/Widget.AppCompat.SeekBar.Discrete"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
                         android:layout_weight="1"
                         android:max="100"
                         android:progress="1" />
@@ -166,6 +170,8 @@
                         style="@style/Widget.AppCompat.SeekBar.Discrete"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
                         android:layout_weight="1"
                         android:max="30"
                         android:progress="1" />
@@ -191,9 +197,11 @@
                         style="@style/Widget.AppCompat.SeekBar.Discrete"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
                         android:layout_weight="1"
-                        android:max="90"
-                        android:progress="1" />
+                        android:max="75"
+                        android:progress="5" />
 
                     <TextView
                         android:id="@+id/lbl_fisica_minutos"

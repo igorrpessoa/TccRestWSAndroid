@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import igor.com.br.tccrestwsandroid.Constantes;
 import igor.com.br.tccrestwsandroid.R;
 import igor.com.br.tccrestwsandroid.RetrofitUtil;
 import igor.com.br.tccrestwsandroid.entity.Usuario;
@@ -53,9 +54,12 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.btn_login)
     public void btnLoginClick() {
+        fazerLogin(editLogin.getText().toString(),editPassword.getText().toString());
+    }
+    public void fazerLogin(String email, String senha){
         Usuario u = new Usuario();
-        u.setEmail(editLogin.getText().toString());
-        u.setSenha(editPassword.getText().toString());
+        u.setEmail(email);
+        u.setSenha(senha);
         retrofit = new RetrofitUtil().createRetrofit();
         UsuarioInterface i  = retrofit.create(UsuarioInterface.class);
         Call<Usuario> call = i.login(u);
@@ -85,5 +89,27 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
+    @OnClick(R.id.text_cadastro)
+    protected void btnCadastro(){
+        vaiParaCadastro();
+    }
+
+    private void vaiParaCadastro(){
+        Intent intent = new Intent(mContext,CadastroLoginActivity.class);
+        startActivityForResult(intent,1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 1) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                String email = data.getStringExtra("EMAIL");
+                String senha = data.getStringExtra("SENHA");
+                fazerLogin(email,senha);
+            }
+        }
+    }
 
 }
