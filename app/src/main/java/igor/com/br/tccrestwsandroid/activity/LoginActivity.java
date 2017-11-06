@@ -50,6 +50,7 @@ public class LoginActivity extends BaseActivity {
     private void vaiParaMain(){
         Intent intent = new Intent(mContext,MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @OnClick(R.id.btn_login)
@@ -71,11 +72,10 @@ public class LoginActivity extends BaseActivity {
                 if(response!= null){
                     Usuario usuarioLogado = response.body();
                     if(usuarioLogado != null && usuarioLogado.getId() != null){
-                        Intent intent = new Intent(mContext,MainActivity.class);
                         setSharedPreferences(mContext,mContext.getString(R.string.usuario_logado),new Gson().toJson(usuarioLogado));
-                        startActivity(intent);
+                        vaiParaMain();
                     }else{
-                        editPassword.setError("Senha incorreta");
+                        Toast.makeText(LoginActivity.this, "Login ou senha errados", Toast.LENGTH_SHORT).show();
                     }
                 }
 

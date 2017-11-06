@@ -44,31 +44,54 @@ public class CadastroLoginActivity extends BaseActivity {
     @OnClick(R.id.btn_cadastrar)
     public void btnCadastro() {
         Usuario u = new Usuario();
-        u.setEmail(editLogin.getText().toString());
-        u.setSenha(editPassword.getText().toString());
-        u.setNome(editNome.getText().toString());
-        retrofit = new RetrofitUtil().createRetrofit();
-        UsuarioInterface i  = retrofit.create(UsuarioInterface.class);
-        Call<Usuario> call = i.saveUsuario(u);
-        dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
-        call.enqueue(new Callback<Usuario>() {
-            @Override
-            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                dialog.dismiss();
-                if(response!= null){
-                    Usuario usuarioLogado = response.body();
-                    if(usuarioLogado != null && usuarioLogado.getId() != null) {
-                        vaiParaLogin(usuarioLogado.getEmail(),editPassword.getText().toString());
+        String email = editLogin.getText().toString();
+        String senha = editPassword.getText().toString();
+        String nome = editNome.getText().toString();
+        if (validaCadastro(nome,email,senha)) {
+            u.setEmail(email);
+            u.setNome(nome);
+            u.setSenha(senha);
+            retrofit = new RetrofitUtil().createRetrofit();
+            UsuarioInterface i = retrofit.create(UsuarioInterface.class);
+            Call<Usuario> call = i.saveUsuario(u);
+            dialog = ProgressDialog.show(this, "", "Por favor aguarde...", false);
+            call.enqueue(new Callback<Usuario>() {
+                @Override
+                public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                    dialog.dismiss();
+                    if (response != null) {
+                        Usuario usuarioLogado = response.body();
+                        if (usuarioLogado != null && usuarioLogado.getId() != null) {
+                            vaiParaLogin(usuarioLogado.getEmail(), editPassword.getText().toString());
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<Usuario> call, Throwable t) {
-                Toast.makeText(CadastroLoginActivity.this, "Não foi possível acessar o servidor. Verifique sua internet", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            }
-        });
+                @Override
+                public void onFailure(Call<Usuario> call, Throwable t) {
+                    Toast.makeText(CadastroLoginActivity.this, "Não foi possível acessar o servidor. Verifique sua internet", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+            });
+        }
+
+    }
+    public boolean validaCadastro(String nome, String email, String senha){
+        boolean valido = true;
+        if (nome.length()>0) {
+            editNome.setError("Deve conter um nome!");
+            valido = false;
+        }
+        if (email.contains("@") && email.contains(".com") && !email.contains(" ")) {
+            editLogin.setError("Deve conter um email válido!");
+            valido = false;
+        }
+        if (senha.length() >= 6) {
+            editPassword.setError("Deve conter uma senha de pelo menos 6 caracteres!");
+            valido = false;
+        }
+
+        return valido;
     }
 
     public void vaiParaLogin(String email, String senha){

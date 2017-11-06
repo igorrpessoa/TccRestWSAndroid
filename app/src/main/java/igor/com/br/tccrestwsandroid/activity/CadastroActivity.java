@@ -22,7 +22,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import igor.com.br.tccrestwsandroid.vo.FuzzyficationVo;
+import igor.com.br.tccrestwsandroid.vo.UsuarioAtividadeVo;
 import igor.com.br.tccrestwsandroid.Constantes;
 import igor.com.br.tccrestwsandroid.R;
 import igor.com.br.tccrestwsandroid.RetrofitUtil;
@@ -61,8 +61,6 @@ public class CadastroActivity extends BaseActivity {
     public Button btnFinalizar;
     @BindView(R.id.lbl_pergunta)
     public TextView lblPergunta;
-    @BindView(R.id.lbl_satisfacao)
-    public TextView lblSatisfacao;
     @BindView(R.id.linear_radio)
     public LinearLayout linearRadio;
     @BindView(R.id.linear_satisfacao)
@@ -115,12 +113,6 @@ public class CadastroActivity extends BaseActivity {
         mContext = this;
         retrofit = new RetrofitUtil().createRetrofit();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.minha_toolbar);
-        Button btnAtividade = (Button) toolbar.findViewById(R.id.btn_atividades);
-        btnAtividade.setVisibility(Button.GONE);
-        Button btnPerfil = (Button) toolbar.findViewById(R.id.btn_perfil);
-        btnPerfil.setVisibility(Button.GONE);
-
         Bundle bundle = getIntent().getExtras();
 
         String usuarioJson = getSharedPreferences(mContext,mContext.getString(R.string.usuario_logado));
@@ -148,7 +140,6 @@ public class CadastroActivity extends BaseActivity {
         perfil.setSocial(0.0);
         lblNumeroDias.setText("0x por Mês");
         lblNumeroPessoas.setText("0 Pessoas");
-        lblSatisfacao.setText("0");
         lblFisicaMinutos.setText("0");
     }
 
@@ -178,12 +169,13 @@ public class CadastroActivity extends BaseActivity {
         //FREQUENCIA
         perguntas.put(Constantes.Perguntas.FREQUENCIA.getValor(),"Quantas vezes por mês você a pratica?");
 
+        lblPaginas.setText("1/"+perguntas.size());
+
         atualizaPergunta();
 
         seekBarSatisfacao.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                lblSatisfacao.setText(progress + "/100");
             }
 
             @Override
@@ -265,7 +257,7 @@ public class CadastroActivity extends BaseActivity {
             btnDireita.setVisibility(Button.GONE);
             btnFinalizar.setVisibility(Button.VISIBLE);
         }else {
-            lblPaginas.setText((indexPergunta + 1) + "/" + perguntas.size());
+            lblPaginas.setText((indexPergunta) + "/" + perguntas.size());
         }
         atualizaPergunta();
     }
@@ -274,7 +266,7 @@ public class CadastroActivity extends BaseActivity {
     public void setBtnEsquerda(){
         indexPergunta--;
         //em caso de não seja esporte, retorna mais uma pergunta
-        if(indexPergunta == Constantes.Perguntas.SAUDE1.getValor() && resposta.get(indexPergunta).equals("N")){
+        if(indexPergunta == Constantes.Perguntas.SAUDE2.getValor() && resposta.get(indexPergunta-1).equals("N")){
             indexPergunta--;
         }
         if(btnDireita.getVisibility() == (Button.GONE)){
@@ -284,7 +276,7 @@ public class CadastroActivity extends BaseActivity {
         if(indexPergunta == Constantes.Perguntas.SAUDE1.getValor()){
             btnEsquerda.setVisibility(Button.GONE);
         }
-        lblPaginas.setText((indexPergunta+1) + "/" + perguntas.size());
+        lblPaginas.setText((indexPergunta) + "/" + perguntas.size());
         atualizaPergunta();
     }
 
@@ -293,13 +285,14 @@ public class CadastroActivity extends BaseActivity {
         montarResposta();
         retrofit = new RetrofitUtil().createRetrofit();
         UsuarioAtividadeInterface i  = retrofit.create(UsuarioAtividadeInterface.class);
-        usuarioAtividade.setUsuario(usuarioLogado);
-        usuarioAtividade.setPerfil(perfil);
-        usuarioAtividade.setAtividade(atividadeSelecionada);
-        FuzzyficationVo fuzzy = new FuzzyficationVo();
-        fuzzy.setUsuarioAtividade(usuarioAtividade);
-        fuzzy.setComplementos(complementosSelecionados);
-        Call<Usuario> call = i.fuzzyficar(fuzzy);
+        UsuarioAtividadeVo uaVo = new UsuarioAtividadeVo();
+        uaVo.setUsuario(usuarioLogado);
+        uaVo.setPerfil(perfil);
+        uaVo.setAtividade(atividadeSelecionada);
+        uaVo.setComplementos(complementosSelecionados);
+        uaVo.setFrequencia(usuarioAtividade.getFrequencia());
+        uaVo.setSatisfacao(usuarioAtividade.getSatisfacao());
+        Call<Usuario> call = i.fuzzyficar(uaVo);
         dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
         call.enqueue(new Callback<Usuario>() {
             @Override
@@ -374,7 +367,7 @@ public class CadastroActivity extends BaseActivity {
                 perfil.setSocial(100.);
             }
        }else if(indexPergunta == Constantes.Perguntas.SATISFACAO.getValor()){
-            progress = seekBarSatisfacao.getProgress();
+            progress = seekBarSatisfacao.getProgress()*10;
             resposta.put(indexPergunta,progress + "");
             usuarioAtividade.setSatisfacao(progress + 0.0);
        }else if(indexPergunta == Constantes.Perguntas.FREQUENCIA.getValor()){

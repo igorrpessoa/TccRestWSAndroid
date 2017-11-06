@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -60,6 +61,13 @@ public class MainActivity extends BaseActivity {
                 onBtnPerfilClick();
             }
         });
+        TextView btnSair = (TextView) toolbar.findViewById(R.id.btn_logout);
+        btnSair.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBtnLogoffClick();
+            }
+        });
         mContext = this;
         String json = getSharedPreferences(mContext,mContext.getString(R.string.usuario_logado));
         usuarioLogado = new Gson().fromJson(json,Usuario.class);
@@ -101,5 +109,10 @@ public class MainActivity extends BaseActivity {
         startActivity(intent);
     }
 
-
+    protected void onBtnLogoffClick(){
+        Intent intent = new Intent(mContext, LoginActivity.class);
+        setSharedPreferences(mContext,mContext.getString(R.string.usuario_logado),null);
+        startActivity(intent);
+        finish();
+    }
 }

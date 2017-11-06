@@ -37,8 +37,7 @@
             <AutoCompleteTextView
                 android:id="@+id/auto_edit_atividade"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="AutoCompleteTextView" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -64,8 +63,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/edit_complemento"
+                <AutoCompleteTextView
+                    android:id="@+id/auto_edit_complemento"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

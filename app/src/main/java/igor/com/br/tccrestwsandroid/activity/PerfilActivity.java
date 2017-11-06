@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -50,13 +51,22 @@ public class PerfilActivity extends BaseActivity {
         setContentView(R.layout.activity_perfil);
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.minha_toolbar);
-//        this.setSupportActionBar(toolbar);
-//        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeButtonEnabled(true);
+        this.setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_action_back));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         Button btnAtividade = (Button) toolbar.findViewById(R.id.btn_atividades);
         btnAtividade.setVisibility(Button.GONE);
         Button btnPerfil = (Button) toolbar.findViewById(R.id.btn_perfil);
         btnPerfil.setVisibility(Button.GONE);
+        TextView btnSair = (TextView) toolbar.findViewById(R.id.btn_logout);
+        btnSair.setVisibility(Button.GONE);
+
         mContext = this;
         String json = getSharedPreferences(mContext,mContext.getString(R.string.usuario_logado));
         usuarioLogado = new Gson().fromJson(json,Usuario.class);

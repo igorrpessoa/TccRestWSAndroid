@@ -59,9 +59,13 @@ public class AtividadesAdapter extends ArrayAdapter<AtividadeVo> {
         String complementosString="";
         if(complementos != null && complementos.size() > 0) {
             for (Complemento c : complementos) {
-                complementosString += c.getNome() + "/";
+                if(c != null) {
+                    complementosString += "#"+c.getNome() + " ";
+                }
             }
-            complementosString = complementosString.substring(0, complementosString.length() - 1);
+            if(!complementosString.isEmpty()) {
+                complementosString = complementosString.substring(0, complementosString.length() - 1);
+            }
             // Populate the data into the template view using the data object
         }
         radio.setText(atividade.getNome() + " " + complementosString);

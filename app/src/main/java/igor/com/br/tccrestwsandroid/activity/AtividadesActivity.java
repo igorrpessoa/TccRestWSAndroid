@@ -24,7 +24,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import igor.com.br.tccrestwsandroid.adapter.AtividadesSugeridasAdapter;
+import igor.com.br.tccrestwsandroid.adapter.ComplementosSugeridosAdapter;
 import igor.com.br.tccrestwsandroid.interfaces.AtividadeInterface;
+import igor.com.br.tccrestwsandroid.interfaces.ComplementoInterface;
 import igor.com.br.tccrestwsandroid.vo.AtividadeVo;
 import igor.com.br.tccrestwsandroid.R;
 import igor.com.br.tccrestwsandroid.RetrofitUtil;
@@ -44,6 +46,7 @@ public class AtividadesActivity extends BaseActivity {
     private AtividadesAdapter atividadesAdapter;
     private ComplementoAdapter complementoAdapter;
     private AtividadesSugeridasAdapter atividadesSugeridasAdapter;
+    private ComplementosSugeridosAdapter complementosSugeridosAdapter;
 
     @BindView(R.id.listview_atividades)
     public ListView listViewAtividades;
@@ -56,11 +59,12 @@ public class AtividadesActivity extends BaseActivity {
 
     @BindView(R.id.auto_edit_atividade)
     public AutoCompleteTextView editAtividade;
-    @BindView(R.id.edit_complemento)
-    public EditText editComplemento;
+    @BindView(R.id.auto_edit_complemento)
+    public AutoCompleteTextView editComplemento;
 
     private List<AtividadeVo> listaAtividades = new ArrayList<>();
     private List<AtividadeVo> listaAtividadesSugeridas = new ArrayList<>();
+    private List<Complemento> listaComplementosSugeridos = new ArrayList<>();
     private List<Complemento> listaComplemento = new ArrayList<>();
 
     private Atividade atividadeSelecionada = null;
@@ -78,21 +82,22 @@ public class AtividadesActivity extends BaseActivity {
         String json = getSharedPreferences(mContext,mContext.getString(R.string.usuario_logado));
         usuarioLogado = new Gson().fromJson(json,Usuario.class);
         btn_criar_atividade.setEnabled(true);
+        dialog = ProgressDialog.show(this, "","Por favor aguarde...", false,true);
         listarAtividadesExecutadas();
+        listarAtividadesSugeridas();
+        listarComplementosSugeridos();
+
     }
 
     public void listarAtividadesExecutadas(){
         UsuarioAtividadeInterface i  = retrofit.create(UsuarioAtividadeInterface.class);
         Call<List<AtividadeVo>> call = i.selectAllUsuarioAtividade(usuarioLogado);
-        dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
         call.enqueue(new Callback<List<AtividadeVo>>() {
             @Override
             public void onResponse(Call<List<AtividadeVo>> call, Response<List<AtividadeVo>> response) {
-                dialog.dismiss();
                 if(response!= null){
                     listaAtividades = response.body();
                     configuraAdapterUsuarioAtividade();
-                    listarAtividadesSugeridas();
                 }
 
             }
@@ -115,7 +120,9 @@ public class AtividadesActivity extends BaseActivity {
                     editAtividade.setText(listaAtividades.get(position).getAtividade().getNome());
                     List<Complemento> complementos = listaAtividades.get(position).getComplementos();
                     listaComplemento.clear();
-                    listaComplemento.addAll(complementos);
+                    if(complementos != null) {
+                        listaComplemento.addAll(complementos);
+                    }
                     complementoAdapter.notifyDataSetChanged();
                     atividadesAdapter.notifyDataSetChanged();
                 }
@@ -133,11 +140,10 @@ public class AtividadesActivity extends BaseActivity {
         AtividadeVo filtro = new AtividadeVo();
         filtro.setValido(1);
         Call<List<AtividadeVo>> call = i.selecionaAtividades(filtro);
-        dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
+//        dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
         call.enqueue(new Callback<List<AtividadeVo>>() {
             @Override
             public void onResponse(Call<List<AtividadeVo>> call, Response<List<AtividadeVo>> response) {
-                dialog.dismiss();
                 if(response!= null){
                     listaAtividadesSugeridas = response.body();
                     configuraAdapterAtividadesSugeridas(listaAtividadesSugeridas);
@@ -156,7 +162,33 @@ public class AtividadesActivity extends BaseActivity {
         atividadesSugeridasAdapter = new AtividadesSugeridasAdapter(mContext, atividades);
         editAtividade.setAdapter(atividadesSugeridasAdapter);
     }
+    public void listarComplementosSugeridos(){
+        ComplementoInterface i  = retrofit.create(ComplementoInterface.class);
+        Complemento filtro = new Complemento();
+        filtro.setValido(1);
+        Call<List<Complemento>> call = i.selectAllComplemento(filtro);
+        //dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
+        call.enqueue(new Callback<List<Complemento>>() {
+            @Override
+            public void onResponse(Call<List<Complemento>> call, Response<List<Complemento>> response) {
+                dialog.dismiss();
+                if(response!= null){
+                    listaComplementosSugeridos = response.body();
+                    configuraAdapterComplementosSugeridos(listaComplementosSugeridos);
+                }
+            }
 
+            @Override
+            public void onFailure(Call<List<Complemento>> call, Throwable t) {
+                dialog.dismiss();
+                Toast.makeText(AtividadesActivity.this, "Não foi possível acessar o servidor. Verifique sua internet", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    public void configuraAdapterComplementosSugeridos(List<Complemento> comnplementos){
+        complementosSugeridosAdapter = new ComplementosSugeridosAdapter(mContext, comnplementos);
+        editComplemento.setAdapter(complementosSugeridosAdapter);
+    }
     @OnClick(R.id.btn_criar_atividade)
     public void criarAtividade(){
         if(atividadeSelecionada == null){
@@ -182,13 +214,16 @@ public class AtividadesActivity extends BaseActivity {
                         AtividadeVo atividade = response.body();
                         String atividadesString = "";
                         if(atividade.getAtividade().getValido() == null || atividade.getAtividade().getValido().equals(0)){
-                            atividadesString = atividade.getAtividade().getNome();
-                            atividadesString  += "/";
+                            atividadesString += "#";
+                            atividadesString += atividade.getAtividade().getNome();
                         }
-                        for(Complemento c : atividade.getComplementos()){
-                            if(c.getValido() == null || c.getValido().equals(0)){
-                                atividadesString += c.getNome();
-                                atividadesString  += "/";
+                        if(atividade.getComplementos() != null) {
+                            for (Complemento c : atividade.getComplementos()) {
+                                if (c.getValido() == null || c.getValido().equals(0)) {
+                                    atividadesString += "#";
+                                    atividadesString += c.getNome();
+                                    atividadesString += " ";
+                                }
                             }
                         }
                         if(atividadesString.isEmpty()) {
