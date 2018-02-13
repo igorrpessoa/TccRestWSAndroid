@@ -148,26 +148,26 @@ public class CadastroActivity extends BaseActivity {
 
         //SAUDE
         perguntas.put(Constantes.Perguntas.SAUDE1.getValor(),"Você fez uma atividade física?");
-        perguntas.put(Constantes.Perguntas.SAUDE2.getValor(),"Quanto durou e qual foi a intensidade da atividade?");
-        perguntas.put(Constantes.Perguntas.SAUDE3.getValor(),"Você descansou após ou durante a atividade?");
+        perguntas.put(Constantes.Perguntas.SAUDE2.getValor(),"Quanto tempo durou e qual foi a intensidade da atividade?");
+        perguntas.put(Constantes.Perguntas.SAUDE3.getValor(),"Você descansou fisicamente durante ou após a atividade?");
         perguntas.put(Constantes.Perguntas.SAUDE4.getValor(),"Você relaxou mentamente exercendo a atividade?");
         perguntas.put(Constantes.Perguntas.SAUDE5.getValor(),"Você fez a atividade na natureza ou em um lugar com bastante vegetação?");
         //SOCIAL
-        perguntas.put(Constantes.Perguntas.SOCIAL.getValor(),"Quantas pessoas participaram?");
+        perguntas.put(Constantes.Perguntas.SOCIAL.getValor(),"Quantas pessoas participaram da atividade?");
         //INTELECTO
-        perguntas.put(Constantes.Perguntas.INTELECTO1.getValor(),"Você aprendeu algo novo?");
-        perguntas.put(Constantes.Perguntas.INTELECTO2.getValor(),"Precisou pensar rapidamente?");
-        perguntas.put(Constantes.Perguntas.INTELECTO3.getValor(),"Teve que guardar ou guardou informações?");
-        perguntas.put(Constantes.Perguntas.INTELECTO4.getValor(),"Você usou de estratégia/planejamento?");
+        perguntas.put(Constantes.Perguntas.INTELECTO1.getValor(),"Houve o aprendizado de algo novo para você?");
+        perguntas.put(Constantes.Perguntas.INTELECTO2.getValor(),"Você precisou pensar rapidamente para resolver algum problema ou situação?");
+        perguntas.put(Constantes.Perguntas.INTELECTO3.getValor(),"Teve que usar a memória ou guardar alguma informação?");
+        perguntas.put(Constantes.Perguntas.INTELECTO4.getValor(),"Você usou de estratégia/planejamento para executar a atividade?");
         //ARTISTICO
-        perguntas.put(Constantes.Perguntas.ARTISTICO1.getValor(),"O que você sentiu? Se expressou de alguma maneira?");
-        perguntas.put(Constantes.Perguntas.ARTISTICO2.getValor(),"Os seus sentidos foram estimulados durante a atividade?");
-        perguntas.put(Constantes.Perguntas.ARTISTICO3.getValor(),"Criou algo novo pra você?");
+        perguntas.put(Constantes.Perguntas.ARTISTICO1.getValor(),"Houve expressão de emoções fortes como felicidade, tristeza, medo, surpresa, raiva e nojo, de alguma maneira?");
+        perguntas.put(Constantes.Perguntas.ARTISTICO2.getValor(),"Os seus sentidos (visão, oufato, toque) foram estimulados e foram importantes para execução da atividade?");
+        perguntas.put(Constantes.Perguntas.ARTISTICO3.getValor(),"Durante ou após a atividade houve a criação de algo novo?");
         perguntas.put(Constantes.Perguntas.ARTISTICO4.getValor(),"Teve que usar da sua imaginação?");
         //SATISFACAO
-        perguntas.put(Constantes.Perguntas.SATISFACAO.getValor(),"Qual a sua satisfação fazendo a atividade?");
+        perguntas.put(Constantes.Perguntas.SATISFACAO.getValor(),"Qual a sua satisfação fazendo a atividade? Você goustou de fazê-la?");
         //FREQUENCIA
-        perguntas.put(Constantes.Perguntas.FREQUENCIA.getValor(),"Quantas vezes por mês você a pratica?");
+        perguntas.put(Constantes.Perguntas.FREQUENCIA.getValor(),"Quantas vezes por mês você pratica a atividade em média?");
 
         lblPaginas.setText("1/"+perguntas.size());
 
@@ -256,9 +256,8 @@ public class CadastroActivity extends BaseActivity {
         if(indexPergunta == Constantes.Perguntas.FREQUENCIA.getValor()){
             btnDireita.setVisibility(Button.GONE);
             btnFinalizar.setVisibility(Button.VISIBLE);
-        }else {
-            lblPaginas.setText((indexPergunta) + "/" + perguntas.size());
         }
+        lblPaginas.setText((indexPergunta) + "/" + perguntas.size());
         atualizaPergunta();
     }
 

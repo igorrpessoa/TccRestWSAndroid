@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -36,7 +37,14 @@ public class ComplementoAdapter extends ArrayAdapter<Complemento> {
             }
             // Lookup view for data population
             TextView text = (TextView) convertView.findViewById(R.id.lbl_complemento);
-
+            ImageView img = (ImageView) convertView.findViewById(R.id.img_clear);
+            img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AtividadesActivity activity = (AtividadesActivity)getContext();
+                    activity.removeComplemento(position);
+                }
+            });
             // Populate the data into the template view using the data object
             text.setText(complemento.getNome());
             // Return the completed view to render on screen

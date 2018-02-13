@@ -51,7 +51,9 @@ public class PerfilActivity extends BaseActivity {
         setContentView(R.layout.activity_perfil);
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.minha_toolbar);
+        toolbar.setTitle("Seu Perfil");
         this.setSupportActionBar(toolbar);
+
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_action_back));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

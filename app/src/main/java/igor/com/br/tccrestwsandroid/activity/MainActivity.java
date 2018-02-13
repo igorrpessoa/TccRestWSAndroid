@@ -1,12 +1,15 @@
 package igor.com.br.tccrestwsandroid.activity;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +44,12 @@ public class MainActivity extends BaseActivity {
     private Usuario usuarioLogado;
     @BindView(R.id.btn_sugestao)
     public Button btnSugestao;
+    @BindView(R.id.layout_sugestao)
+    public LinearLayout layoutSugestão;
+    @BindView(R.id.layout_tutorial)
+    public LinearLayout layoutTutorial;
+    @BindView(R.id.lbl_tutorial)
+    public TextView lblTutorial;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +82,17 @@ public class MainActivity extends BaseActivity {
         usuarioLogado = new Gson().fromJson(json,Usuario.class);
         retrofit = new RetrofitUtil().createRetrofit();
         ButterKnife.bind(this);
+        lblTutorial.setText("O aplicativo se trata do desenvolvimento de um TCC, que visa sugerir possíveis atividades ao usuário de acordo com as suas atividades executadas no dia a dia. \n" +
+                "Para cadastrar sua atividade, acesse a tela de atividades pelo botão superior direito na barra de navegação. \n" +
+                "A partir do momento em que cadastrar a sua primeira atividade, um perfil será gerado para você, podendo ser acessado pelo botão central na barra de navegação. \n" +
+                "Quando seu perfil for gerado, será possível pedir a sugestão de uma atividade nessa mesma tela, apertando o botão 'Sugerir Atividade'.");
+        if(usuarioLogado.getPerfil() != null && usuarioLogado.getPerfil().getId() != null &&  usuarioLogado.getPerfil().getId() != 0){
+            layoutSugestão.setVisibility(View.VISIBLE);
+            layoutTutorial.setVisibility(View.GONE);
+        }else{
+            layoutSugestão.setVisibility(View.GONE);
+            layoutTutorial.setVisibility(View.VISIBLE);
+        }
     }
 
     @OnClick(R.id.btn_sugestao)
@@ -86,7 +106,7 @@ public class MainActivity extends BaseActivity {
                 dialog.dismiss();
                 if(response!= null){
                     AtividadeVo atividadeSugerida = response.body();
-
+                    showDialog(atividadeSugerida);
                 }
 
             }
@@ -97,6 +117,32 @@ public class MainActivity extends BaseActivity {
                 Toast.makeText(MainActivity.this, "Não foi possível acessar o servidor. Verifique sua internet", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void showDialog(AtividadeVo atividadeSugerida){
+
+        final Dialog dialog = new Dialog(mContext);
+        dialog.setContentView(R.layout.dialog_atividade_sugerida);
+        dialog.setTitle("Atividade Sugerida");
+
+        // set the custom dialog components - text, image and button
+        TextView txtAtividadeSugerida = (TextView) dialog.findViewById(R.id.lbl_atividade_sugerida);
+        if(atividadeSugerida == null){
+            atividadeSugerida = new AtividadeVo();
+            txtAtividadeSugerida.setText("Não foi encontrado nenhuma atividade com seu perfil =/");
+        }else {
+            txtAtividadeSugerida.setText(atividadeSugerida.getAtividade().getNome());
+        }
+        Button dialogButton = (Button) dialog.findViewById(R.id.btn_ok);
+        // if button is clicked, close the custom dialog
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     protected void onBtnAtividadeClick(){

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TccRestWSAndroid</string>
+    <string name="app_name">AtividApp</string>
     <string name="action_settings">Settings</string>
     <string name="usuario_logado">USUARIO_LOGADO</string>
     <string name="preferencias">PREFERENCIAS</string>

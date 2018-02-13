@@ -86,8 +86,43 @@ public class AtividadesActivity extends BaseActivity {
         listarAtividadesExecutadas();
         listarAtividadesSugeridas();
         listarComplementosSugeridos();
-
+        configuraAdapterComplemento();
+        if(usuarioLogado.getPerfil() == null || usuarioLogado.getPerfil().getId() == null || usuarioLogado.getPerfil().getId() == 0) {
+            mostraDialogTutorial();
+        }
     }
+
+    public void mostraDialogTutorial(){
+        AlertDialog alerta;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //define o titulo
+        builder.setTitle("Cadastro de Atividades");
+        //define a mensagem
+        builder.setMessage(
+                "Nesta tela as atividades podem ser cadastradas. \n" +
+                        "Elas são compostas por dois principais parâmetros: Atividades e Complementos. \n" +
+                        "Para cadastrá-la, você usará palavras chave que representem a atividade. \n" +
+                        "O nome da atividade é muito importante! \n" +
+                        "Foram cadastradas algumas atividades base no banco de dados, e a sua nomenclatura deve ser seguida para que o sistema possa entender o que foi feito. \n" +
+                        "Evite palavras compostas como 'Jogar Futebol'. \n" +
+                        "Simplifique e cadastre 'Futebol'. \n" +
+                        "Adicione o 'Jogar' no complemento. \n" +
+                        "Se jogou em um parque, ou jogou com seus amigos, adicione essas informações no complemento com 'parque' e 'amigos'. \n" +
+                        "Evite nomes de pessoas ou lugares, apenas generalize. \n" +
+                        "Os complementos não são obrigatórios! \n" +
+                        "As suas atividades cadastradas podem ser sugeridas a outras pessoas =). \n");
+
+        //define um botão como positivo
+        builder.setPositiveButton("Entendi!", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+            }
+        });
+        //cria o AlertDialog
+        alerta = builder.create();
+        //Exibe
+        alerta.show();
+    }
+
 
     public void listarAtividadesExecutadas(){
         UsuarioAtividadeInterface i  = retrofit.create(UsuarioAtividadeInterface.class);
@@ -117,20 +152,17 @@ public class AtividadesActivity extends BaseActivity {
             listViewAtividades.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    editAtividade.setText(listaAtividades.get(position).getAtividade().getNome());
-                    List<Complemento> complementos = listaAtividades.get(position).getComplementos();
-                    listaComplemento.clear();
-                    if(complementos != null) {
-                        listaComplemento.addAll(complementos);
-                    }
-                    complementoAdapter.notifyDataSetChanged();
-                    atividadesAdapter.notifyDataSetChanged();
+
                 }
             });
         }
     }
-    public void configuraAdapterComplemento(List<Complemento> complementos){
-        complementoAdapter = new ComplementoAdapter(mContext, complementos);
+
+    public void configuraAdapterComplemento(){
+        if(listaComplemento == null){
+            listaComplemento = new ArrayList<>();
+        }
+        complementoAdapter = new ComplementoAdapter(mContext, listaComplemento);
         listViewComplemento.setAdapter(complementoAdapter);
         complementoAdapter.notifyDataSetChanged();
     }
@@ -276,8 +308,16 @@ public class AtividadesActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    public void setAtividadeSelecionada(int id) {
-        this.atividadeSelecionada = listaAtividades.get(id).getAtividade();
+    public void setAtividadeSelecionada(int position) {
+//        this.atividadeSelecionada = listaAtividades.get(position).getAtividade();
+        editAtividade.setText(listaAtividades.get(position).getAtividade().getNome());
+        List<Complemento> complementos = listaAtividades.get(position).getComplementos();
+        listaComplemento.clear();
+        if(complementos != null) {
+            listaComplemento.addAll(complementos);
+        }
+        configuraAdapterComplemento();
+        atividadesAdapter.notifyDataSetChanged();
     }
 
 
@@ -285,7 +325,13 @@ public class AtividadesActivity extends BaseActivity {
     public void adicionarComplemento() {
         String complemento = editComplemento.getText().toString();
         listaComplemento.add(new Complemento(complemento));
-        configuraAdapterComplemento(listaComplemento);
+        configuraAdapterComplemento();
+        editComplemento.setText("");
+    }
+
+    public void removeComplemento(int position) {
+        listaComplemento.remove(position);
+        configuraAdapterComplemento();
         editComplemento.setText("");
     }
 }

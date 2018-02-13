@@ -78,15 +78,15 @@ public class CadastroLoginActivity extends BaseActivity {
     }
     public boolean validaCadastro(String nome, String email, String senha){
         boolean valido = true;
-        if (nome.length()>0) {
+        if (nome.length()<0) {
             editNome.setError("Deve conter um nome!");
             valido = false;
         }
-        if (email.contains("@") && email.contains(".com") && !email.contains(" ")) {
+        if (!(android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches())){
             editLogin.setError("Deve conter um email válido!");
             valido = false;
         }
-        if (senha.length() >= 6) {
+        if (senha.length() < 6) {
             editPassword.setError("Deve conter uma senha de pelo menos 6 caracteres!");
             valido = false;
         }

@@ -22,7 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:background="@drawable/edit_text_border"
             android:orientation="vertical">
 
             <TextView
@@ -46,7 +45,6 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/edit_text_border"
             android:orientation="vertical">
 
             <TextView
@@ -83,6 +81,7 @@
 
             <ListView
                 android:id="@+id/listview_complemento"
+                android:background="@drawable/edit_text_border"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
@@ -91,7 +90,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
-            android:background="@drawable/edit_text_border"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -107,6 +105,7 @@
             <ListView
                 android:id="@+id/listview_atividades"
                 android:layout_width="match_parent"
+                android:background="@drawable/edit_text_border"
                 android:layout_height="match_parent" />
 
         </LinearLayout>

@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitUtil {
-    public static final String BASE_URL = "http://192.168.0.10:8080/TccRestWS/rest/";
+    public static final String BASE_URL = "http://35.229.63.74:8080/TccRestWS/rest/";
 
     public Retrofit createRetrofit(){
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
