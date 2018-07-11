@@ -17,8 +17,17 @@ import retrofit2.http.POST;
 public interface UsuarioAtividadeInterface {
 
     @POST("UsuarioAtividadeService/fuzzyficar")
-    Call<Usuario> fuzzyficar(@Body UsuarioAtividadeVo user);
+    Call<Usuario> fuzzyficar(@Body UsuarioAtividadeVo ua);
 
     @POST("UsuarioAtividadeService/selectAllUsuarioAtividade")
-    Call<List<AtividadeVo>> selectAllUsuarioAtividade(@Body Usuario user);
+    Call<List<UsuarioAtividadeVo>> selectAllUsuarioAtividade(@Body Usuario user);
+
+    @POST("UsuarioAtividadeService/editarUsuarioAtividade")
+    Call<UsuarioAtividadeVo> editarUsuarioAtividade(@Body UsuarioAtividadeVo ua);
+
+    @POST("UsuarioAtividadeService/selectUsuarioAtividade")
+    Call<List<UsuarioAtividadeVo>> selectUsuarioAtividade(@Body UsuarioAtividadeVo ua);
+
+    @POST("UsuarioAtividadeService/deleteUsuarioAtividade")
+    Call<Usuario> deleteUsuarioAtividade(@Body UsuarioAtividadeVo atividade);
 }

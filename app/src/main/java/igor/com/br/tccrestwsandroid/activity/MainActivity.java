@@ -5,32 +5,33 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import igor.com.br.tccrestwsandroid.R;
 
 import igor.com.br.tccrestwsandroid.RetrofitUtil;
-import igor.com.br.tccrestwsandroid.adapter.AtividadesSugeridasAdapter;
 import igor.com.br.tccrestwsandroid.entity.Atividade;
+import igor.com.br.tccrestwsandroid.entity.Complemento;
+import igor.com.br.tccrestwsandroid.entity.Perfil;
 import igor.com.br.tccrestwsandroid.entity.Usuario;
 import igor.com.br.tccrestwsandroid.interfaces.AtividadeInterface;
-import igor.com.br.tccrestwsandroid.interfaces.UsuarioAtividadeInterface;
 import igor.com.br.tccrestwsandroid.vo.AtividadeVo;
+import igor.com.br.tccrestwsandroid.vo.UsuarioAtividadeVo;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,6 +51,19 @@ public class MainActivity extends BaseActivity {
     public LinearLayout layoutTutorial;
     @BindView(R.id.lbl_tutorial)
     public TextView lblTutorial;
+    @BindView(R.id.switch_customizado)
+    public Switch switchCustomizado;
+    @BindView(R.id.layout_customizado)
+    public LinearLayout layoutCustomizado;
+
+    @BindView(R.id.seekBar_saude)
+    public SeekBar seekBarSaude;
+    @BindView(R.id.seekBar_intelecto)
+    public SeekBar seekBarIntelecto;
+    @BindView(R.id.seekBar_artistico)
+    public SeekBar seekBarArtistico;
+    @BindView(R.id.seekBar_social)
+    public SeekBar seekBarSocial;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,37 +103,61 @@ public class MainActivity extends BaseActivity {
         if(usuarioLogado.getPerfil() != null && usuarioLogado.getPerfil().getId() != null &&  usuarioLogado.getPerfil().getId() != 0){
             layoutSugestão.setVisibility(View.VISIBLE);
             layoutTutorial.setVisibility(View.GONE);
+
+            seekBarArtistico.setProgress(usuarioLogado.getPerfil().getArtistico().intValue()/10);
+            seekBarSaude.setProgress(usuarioLogado.getPerfil().getSaude().intValue()/10);
+            seekBarIntelecto.setProgress(usuarioLogado.getPerfil().getIntelecto().intValue()/10);
+            seekBarSocial.setProgress(usuarioLogado.getPerfil().getSocial().intValue()/10);
         }else{
             layoutSugestão.setVisibility(View.GONE);
             layoutTutorial.setVisibility(View.VISIBLE);
         }
     }
 
+    @OnCheckedChanged(R.id.switch_customizado)
+    public void switchOnOff(){
+        if(switchCustomizado.isChecked()){
+            layoutCustomizado.setVisibility(View.VISIBLE);
+        }else{
+            layoutCustomizado.setVisibility(View.GONE);
+        }
+    }
+
     @OnClick(R.id.btn_sugestao)
     public void onBtnSugestao(){
+        Usuario usuarioSugestao = usuarioLogado;
+        if(switchCustomizado.isChecked()){
+            Perfil perfilAspirado = new Perfil();
+            perfilAspirado.setArtistico(seekBarArtistico.getProgress()*10.0);
+            perfilAspirado.setSocial(seekBarSocial.getProgress()*10.0);
+            perfilAspirado.setSaude(seekBarSaude.getProgress()*10.0);
+            perfilAspirado.setIntelecto(seekBarIntelecto.getProgress()*10.0);
+            perfilAspirado.setId(usuarioLogado.getPerfil().getId());
+            usuarioSugestao.setPerfil(perfilAspirado);
+        }
         AtividadeInterface i  = retrofit.create(AtividadeInterface.class);
-        Call<AtividadeVo> call = i.sugestaoAtividade(usuarioLogado);
+        Call<UsuarioAtividadeVo> call = i.sugestaoAtividade(usuarioSugestao);
         dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
-        call.enqueue(new Callback<AtividadeVo>() {
+        call.enqueue(new Callback<UsuarioAtividadeVo>() {
             @Override
-            public void onResponse(Call<AtividadeVo> call, Response<AtividadeVo> response) {
+            public void onResponse(Call<UsuarioAtividadeVo> call, Response<UsuarioAtividadeVo> response) {
                 dialog.dismiss();
                 if(response!= null){
-                    AtividadeVo atividadeSugerida = response.body();
+                    UsuarioAtividadeVo atividadeSugerida = response.body();
                     showDialog(atividadeSugerida);
                 }
 
             }
 
             @Override
-            public void onFailure(Call<AtividadeVo> call, Throwable t) {
+            public void onFailure(Call<UsuarioAtividadeVo> call, Throwable t) {
                 dialog.dismiss();
                 Toast.makeText(MainActivity.this, "Não foi possível acessar o servidor. Verifique sua internet", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void showDialog(AtividadeVo atividadeSugerida){
+    public void showDialog(UsuarioAtividadeVo atividadeSugerida){
 
         final Dialog dialog = new Dialog(mContext);
         dialog.setContentView(R.layout.dialog_atividade_sugerida);
@@ -128,10 +166,27 @@ public class MainActivity extends BaseActivity {
         // set the custom dialog components - text, image and button
         TextView txtAtividadeSugerida = (TextView) dialog.findViewById(R.id.lbl_atividade_sugerida);
         if(atividadeSugerida == null){
-            atividadeSugerida = new AtividadeVo();
+            atividadeSugerida = new UsuarioAtividadeVo();
             txtAtividadeSugerida.setText("Não foi encontrado nenhuma atividade com seu perfil =/");
-        }else {
-            txtAtividadeSugerida.setText(atividadeSugerida.getAtividade().getNome());
+        }else{
+            String atividadesString = "";
+            Atividade atividade = atividadeSugerida.getAtividade();
+            List<Complemento> complementos =atividadeSugerida.getComplementos();
+
+            atividadesString += "#";
+            atividadesString += atividade.getNome();
+
+            if(complementos != null) {
+                for (Complemento c : complementos) {
+                    if (c.getNome() != null) {
+                        atividadesString += "#";
+                        atividadesString += c.getNome();
+                        atividadesString += " ";
+                    }
+                }
+            }
+
+            txtAtividadeSugerida.setText(atividadesString);
         }
         Button dialogButton = (Button) dialog.findViewById(R.id.btn_ok);
         // if button is clicked, close the custom dialog

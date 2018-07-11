@@ -14,6 +14,7 @@ import java.util.List;
 
 import igor.com.br.tccrestwsandroid.R;
 import igor.com.br.tccrestwsandroid.activity.AtividadesActivity;
+import igor.com.br.tccrestwsandroid.activity.EditarAtividadeActivity;
 import igor.com.br.tccrestwsandroid.entity.Atividade;
 import igor.com.br.tccrestwsandroid.entity.Complemento;
 
@@ -22,10 +23,11 @@ import igor.com.br.tccrestwsandroid.entity.Complemento;
  */
 
 public class ComplementoAdapter extends ArrayAdapter<Complemento> {
+    private Context mContext;
     public ComplementoAdapter(Context context, List<Complemento> users) {
             super(context, 0, users);
+        mContext = context;
         }
-
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
@@ -41,8 +43,14 @@ public class ComplementoAdapter extends ArrayAdapter<Complemento> {
             img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AtividadesActivity activity = (AtividadesActivity)getContext();
-                    activity.removeComplemento(position);
+                    if(mContext instanceof AtividadesActivity){
+                        AtividadesActivity activity = (AtividadesActivity)getContext();
+                        activity.removeComplemento(position);
+                    }else if(mContext instanceof EditarAtividadeActivity){
+                        EditarAtividadeActivity activity = (EditarAtividadeActivity)getContext();
+                        activity.removeComplemento(position);
+                    }
+
                 }
             });
             // Populate the data into the template view using the data object

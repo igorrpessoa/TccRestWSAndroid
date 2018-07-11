@@ -6,11 +6,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatTextView;
+
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -23,8 +26,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import igor.com.br.tccrestwsandroid.adapter.AtividadesSugeridasAdapter;
-import igor.com.br.tccrestwsandroid.adapter.ComplementosSugeridosAdapter;
+import igor.com.br.tccrestwsandroid.entity.UsuarioAtividade;
 import igor.com.br.tccrestwsandroid.interfaces.AtividadeInterface;
 import igor.com.br.tccrestwsandroid.interfaces.ComplementoInterface;
 import igor.com.br.tccrestwsandroid.vo.AtividadeVo;
@@ -36,6 +38,7 @@ import igor.com.br.tccrestwsandroid.entity.Atividade;
 import igor.com.br.tccrestwsandroid.entity.Complemento;
 import igor.com.br.tccrestwsandroid.entity.Usuario;
 import igor.com.br.tccrestwsandroid.interfaces.UsuarioAtividadeInterface;
+import igor.com.br.tccrestwsandroid.vo.UsuarioAtividadeVo;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,8 +48,6 @@ public class AtividadesActivity extends BaseActivity {
 
     private AtividadesAdapter atividadesAdapter;
     private ComplementoAdapter complementoAdapter;
-    private AtividadesSugeridasAdapter atividadesSugeridasAdapter;
-    private ComplementosSugeridosAdapter complementosSugeridosAdapter;
 
     @BindView(R.id.listview_atividades)
     public ListView listViewAtividades;
@@ -62,7 +63,7 @@ public class AtividadesActivity extends BaseActivity {
     @BindView(R.id.auto_edit_complemento)
     public AutoCompleteTextView editComplemento;
 
-    private List<AtividadeVo> listaAtividades = new ArrayList<>();
+    private List<UsuarioAtividadeVo> listaAtividades = new ArrayList<>();
     private List<AtividadeVo> listaAtividadesSugeridas = new ArrayList<>();
     private List<Complemento> listaComplementosSugeridos = new ArrayList<>();
     private List<Complemento> listaComplemento = new ArrayList<>();
@@ -83,10 +84,9 @@ public class AtividadesActivity extends BaseActivity {
         usuarioLogado = new Gson().fromJson(json,Usuario.class);
         btn_criar_atividade.setEnabled(true);
         dialog = ProgressDialog.show(this, "","Por favor aguarde...", false,true);
-        listarAtividadesExecutadas();
         listarAtividadesSugeridas();
-        listarComplementosSugeridos();
         configuraAdapterComplemento();
+
         if(usuarioLogado.getPerfil() == null || usuarioLogado.getPerfil().getId() == null || usuarioLogado.getPerfil().getId() == 0) {
             mostraDialogTutorial();
         }
@@ -126,10 +126,10 @@ public class AtividadesActivity extends BaseActivity {
 
     public void listarAtividadesExecutadas(){
         UsuarioAtividadeInterface i  = retrofit.create(UsuarioAtividadeInterface.class);
-        Call<List<AtividadeVo>> call = i.selectAllUsuarioAtividade(usuarioLogado);
-        call.enqueue(new Callback<List<AtividadeVo>>() {
+        Call<List<UsuarioAtividadeVo>> call = i.selectAllUsuarioAtividade(usuarioLogado);
+        call.enqueue(new Callback<List<UsuarioAtividadeVo>>() {
             @Override
-            public void onResponse(Call<List<AtividadeVo>> call, Response<List<AtividadeVo>> response) {
+            public void onResponse(Call<List<UsuarioAtividadeVo>> call, Response<List<UsuarioAtividadeVo>> response) {
                 if(response!= null){
                     listaAtividades = response.body();
                     configuraAdapterUsuarioAtividade();
@@ -138,7 +138,7 @@ public class AtividadesActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<List<AtividadeVo>> call, Throwable t) {
+            public void onFailure(Call<List<UsuarioAtividadeVo>> call, Throwable t) {
                 dialog.dismiss();
                 Toast.makeText(AtividadesActivity.this, "Não foi possível acessar o servidor. Verifique sua internet", Toast.LENGTH_SHORT).show();
             }
@@ -149,6 +149,7 @@ public class AtividadesActivity extends BaseActivity {
         if(listaAtividades != null) {
             atividadesAdapter = new AtividadesAdapter(mContext, listaAtividades);
             listViewAtividades.setAdapter(atividadesAdapter);
+
             listViewAtividades.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -156,6 +157,7 @@ public class AtividadesActivity extends BaseActivity {
                 }
             });
         }
+        dialog.dismiss();
     }
 
     public void configuraAdapterComplemento(){
@@ -179,6 +181,7 @@ public class AtividadesActivity extends BaseActivity {
                 if(response!= null){
                     listaAtividadesSugeridas = response.body();
                     configuraAdapterAtividadesSugeridas(listaAtividadesSugeridas);
+                    listarComplementosSugeridos();
                 }
 
             }
@@ -190,9 +193,35 @@ public class AtividadesActivity extends BaseActivity {
             }
         });
     }
-    public void configuraAdapterAtividadesSugeridas(List<AtividadeVo> atividades){
-        atividadesSugeridasAdapter = new AtividadesSugeridasAdapter(mContext, atividades);
-        editAtividade.setAdapter(atividadesSugeridasAdapter);
+    public void configuraAdapterAtividadesSugeridas(final List<AtividadeVo> atividades){
+        final List<String> sugestoens = new ArrayList<>();
+        editAtividade.setAdapter(getAtividadeAdapter(mContext,atividades));
+        editAtividade.setOnTouchListener(new View.OnTouchListener()
+        {
+            public boolean onTouch(View arg0, MotionEvent arg1)
+            {
+                editAtividade.showDropDown();
+                return false;
+            }
+        });
+        editAtividade.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(view != null){
+                    editAtividade.setText(((AppCompatTextView) view).getText());
+                }
+            }
+        });
+    }
+    private ArrayAdapter<String> getAtividadeAdapter(Context context,List<AtividadeVo> a) {
+        List<AtividadeVo> atividades = a;
+        List<String> suggestions = new ArrayList<>();
+        for (AtividadeVo atividade : atividades) {
+            if(atividade.getAtividade().getNome() != null && !atividade.getAtividade().getNome().isEmpty() ){
+                suggestions.add(atividade.getAtividade().getNome());
+            }
+        }
+        return new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, suggestions);
     }
     public void listarComplementosSugeridos(){
         ComplementoInterface i  = retrofit.create(ComplementoInterface.class);
@@ -203,10 +232,10 @@ public class AtividadesActivity extends BaseActivity {
         call.enqueue(new Callback<List<Complemento>>() {
             @Override
             public void onResponse(Call<List<Complemento>> call, Response<List<Complemento>> response) {
-                dialog.dismiss();
                 if(response!= null){
                     listaComplementosSugeridos = response.body();
                     configuraAdapterComplementosSugeridos(listaComplementosSugeridos);
+                    listarAtividadesExecutadas();
                 }
             }
 
@@ -217,9 +246,37 @@ public class AtividadesActivity extends BaseActivity {
             }
         });
     }
-    public void configuraAdapterComplementosSugeridos(List<Complemento> comnplementos){
-        complementosSugeridosAdapter = new ComplementosSugeridosAdapter(mContext, comnplementos);
-        editComplemento.setAdapter(complementosSugeridosAdapter);
+    public void configuraAdapterComplementosSugeridos(final List<Complemento> complementos){
+        editComplemento.setAdapter(getComplementoAdapter(mContext,complementos));
+        editComplemento.setOnTouchListener(new View.OnTouchListener()
+        {
+            public boolean onTouch(View arg0, MotionEvent arg1)
+            {
+                editComplemento.showDropDown();
+                return false;
+            }
+        });
+        editComplemento.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(view != null){
+                    editComplemento.setText(((AppCompatTextView) view).getText());
+                }
+            }
+        });
+
+    }
+
+
+    private ArrayAdapter<String> getComplementoAdapter(Context context,List<Complemento> c) {
+        List<Complemento> complementos = c;
+        List<String> suggestions = new ArrayList<>();
+        for (Complemento complemento : complementos) {
+            if(complemento.getNome() != null && !complemento.getNome().isEmpty() ){
+                suggestions.add(complemento.getNome());
+            }
+        }
+        return new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, suggestions);
     }
     @OnClick(R.id.btn_criar_atividade)
     public void criarAtividade(){
@@ -309,14 +366,16 @@ public class AtividadesActivity extends BaseActivity {
     }
 
     public void setAtividadeSelecionada(int position) {
-//        this.atividadeSelecionada = listaAtividades.get(position).getAtividade();
+        this.atividadeSelecionada = listaAtividades.get(position).getAtividade();
         editAtividade.setText(listaAtividades.get(position).getAtividade().getNome());
         List<Complemento> complementos = listaAtividades.get(position).getComplementos();
         listaComplemento.clear();
         if(complementos != null) {
-            listaComplemento.addAll(complementos);
+            for(Complemento c : complementos)
+                if(c != null)
+                    listaComplemento.add(c);
         }
-        configuraAdapterComplemento();
+        complementoAdapter.notifyDataSetChanged();
         atividadesAdapter.notifyDataSetChanged();
     }
 
@@ -324,9 +383,11 @@ public class AtividadesActivity extends BaseActivity {
     @OnClick(R.id.img_add)
     public void adicionarComplemento() {
         String complemento = editComplemento.getText().toString();
-        listaComplemento.add(new Complemento(complemento));
-        configuraAdapterComplemento();
-        editComplemento.setText("");
+        if(!complemento.isEmpty() && !complemento.equals(" ")) {
+            listaComplemento.add(new Complemento(complemento));
+            configuraAdapterComplemento();
+            editComplemento.setText("");
+        }
     }
 
     public void removeComplemento(int position) {
@@ -334,4 +395,60 @@ public class AtividadesActivity extends BaseActivity {
         configuraAdapterComplemento();
         editComplemento.setText("");
     }
+
+    public void confirmaDelete(final UsuarioAtividadeVo vo){
+        AlertDialog alerta;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //define o titulo
+        builder.setTitle("Confirma Exclusão");
+        //define a mensagem
+        builder.setMessage("Tem certeza que gostaria de excluir essa atividade?\n");
+
+        //define um botão como positivo
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                deleteAtividade(vo);
+            }
+        });
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+            }
+        });
+        //cria o AlertDialog
+        alerta = builder.create();
+        //Exibe
+        alerta.show();
+    }
+
+    public void deleteAtividade(final UsuarioAtividadeVo vo){
+        UsuarioAtividadeInterface i  = retrofit.create(UsuarioAtividadeInterface.class);
+        vo.setUsuario(usuarioLogado);
+        Call<Usuario> call = i.deleteUsuarioAtividade(vo);
+        dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
+        call.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                dialog.dismiss();
+                if(response!= null){
+                    usuarioLogado = response.body();
+                    setSharedPreferences(mContext,mContext.getString(R.string.usuario_logado),new Gson().toJson(usuarioLogado));
+
+                    int removeIndex = -1;
+                    for(UsuarioAtividadeVo ua :listaAtividades){
+                        if(ua.getAtividade().getId().equals(vo.getAtividade().getId())){
+                            removeIndex = listaAtividades.indexOf(ua);
+                        }
+                    }
+                    listaAtividades.remove(removeIndex);
+                    atividadesAdapter.notifyDataSetChanged();
+                }
+            }
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                Toast.makeText(AtividadesActivity.this, "Não foi possível acessar o servidor. Verifique sua internet", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+    }
+
 }

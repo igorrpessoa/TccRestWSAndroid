@@ -11,7 +11,7 @@ public class AtividadeComplemento {
 	}
 	private Integer id;
 	private Atividade atividade;
-	private List<Complemento> complemento;
+	private Complemento complemento;
 
 	public Integer getId() {
 		return id;
@@ -28,11 +28,11 @@ public class AtividadeComplemento {
 		this.atividade = atividade;
 	}
 
-	public List<Complemento> getComplemento() {
+	public Complemento getComplemento() {
 		return complemento;
 	}
 
-	public void setComplemento(List<Complemento> complemento) {
+	public void setComplemento(Complemento complemento) {
 		this.complemento = complemento;
 	}
 }

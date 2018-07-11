@@ -22,6 +22,9 @@ public class UsuarioAtividadeVo {
     private Double frequencia;
     private Double satisfacao;
     private Perfil perfil;
+    private Double popularidade;
+    private Double relacao;
+    private String resposta;
 
     public Integer getId() {
         return id;
@@ -72,5 +75,23 @@ public class UsuarioAtividadeVo {
     }
     public void setAtividadeComplemento(List<AtividadeComplemento> atividadeComplementos) {
         this.atividadeComplementos = atividadeComplementos;
+    }
+    public Double getPopularidade() {
+        return popularidade;
+    }
+    public void setPopularidade(Double popularidade) {
+        this.popularidade = popularidade;
+    }
+    public Double getRelacao() {
+        return relacao;
+    }
+    public void setRelacao(Double relacao) {
+        this.relacao = relacao;
+    }
+    public String getResposta() {
+        return resposta;
+    }
+    public void setResposta(String resposta) {
+        this.resposta = resposta;
     }
 }

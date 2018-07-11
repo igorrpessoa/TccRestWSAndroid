@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
@@ -18,6 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,7 +50,7 @@ public class CadastroActivity extends BaseActivity {
     private Usuario usuarioLogado;
     private Atividade atividadeSelecionada = null;
     private List<Complemento> complementosSelecionados = null;
-    private Map<Integer,String> resposta = new HashMap();
+    private Map<Integer,String> resposta = new TreeMap<>();
     private Perfil perfil;
     private UsuarioAtividade usuarioAtividade;
     private Retrofit retrofit;
@@ -65,8 +67,10 @@ public class CadastroActivity extends BaseActivity {
     public LinearLayout linearRadio;
     @BindView(R.id.linear_satisfacao)
     public LinearLayout linearSatisfacao;
-    @BindView(R.id.linear_frequencia)
-    public LinearLayout linearFrequencia;
+    @BindView(R.id.linear_frequencia1)
+    public LinearLayout linearFrequencia1;
+    @BindView(R.id.linear_frequencia2)
+    public LinearLayout linearFrequencia2;
     @BindView(R.id.linear_social)
     public LinearLayout linearSocial;
     @BindView(R.id.linear_fisica)
@@ -101,7 +105,10 @@ public class CadastroActivity extends BaseActivity {
     public RadioButton radioModerada;
     @BindView(R.id.radio_vigorosa)
     public RadioButton radioVigorosa;
-
+    @BindView(R.id.radio_frequente_nao)
+    public RadioButton radioFrequenteNao;
+    @BindView(R.id.radio_frequente_sim)
+    public RadioButton radioFrequenteSim;
     private Map<Integer,String> perguntas;
     private int indexPergunta=0;
 
@@ -141,6 +148,9 @@ public class CadastroActivity extends BaseActivity {
         lblNumeroDias.setText("0x por Mês");
         lblNumeroPessoas.setText("0 Pessoas");
         lblFisicaMinutos.setText("0");
+        radioSim.setChecked(true);
+        radioFrequenteSim.setChecked(true);
+        radioModerada.setChecked(true);
     }
 
     private void preparaTela(){
@@ -155,19 +165,20 @@ public class CadastroActivity extends BaseActivity {
         //SOCIAL
         perguntas.put(Constantes.Perguntas.SOCIAL.getValor(),"Quantas pessoas participaram da atividade?");
         //INTELECTO
-        perguntas.put(Constantes.Perguntas.INTELECTO1.getValor(),"Houve o aprendizado de algo novo para você?");
+        perguntas.put(Constantes.Perguntas.INTELECTO1.getValor(),"Houve o aprendizado durante a atividade?");
         perguntas.put(Constantes.Perguntas.INTELECTO2.getValor(),"Você precisou pensar rapidamente para resolver algum problema ou situação?");
         perguntas.put(Constantes.Perguntas.INTELECTO3.getValor(),"Teve que usar a memória ou guardar alguma informação?");
         perguntas.put(Constantes.Perguntas.INTELECTO4.getValor(),"Você usou de estratégia/planejamento para executar a atividade?");
         //ARTISTICO
         perguntas.put(Constantes.Perguntas.ARTISTICO1.getValor(),"Houve expressão de emoções fortes como felicidade, tristeza, medo, surpresa, raiva e nojo, de alguma maneira?");
-        perguntas.put(Constantes.Perguntas.ARTISTICO2.getValor(),"Os seus sentidos (visão, oufato, toque) foram estimulados e foram importantes para execução da atividade?");
+        perguntas.put(Constantes.Perguntas.ARTISTICO2.getValor(),"Os seus sentidos (visão, olfato, toque) foram estimulados e foram importantes para execução da atividade?");
         perguntas.put(Constantes.Perguntas.ARTISTICO3.getValor(),"Durante ou após a atividade houve a criação de algo novo?");
         perguntas.put(Constantes.Perguntas.ARTISTICO4.getValor(),"Teve que usar da sua imaginação?");
         //SATISFACAO
         perguntas.put(Constantes.Perguntas.SATISFACAO.getValor(),"Qual a sua satisfação fazendo a atividade? Você goustou de fazê-la?");
         //FREQUENCIA
-        perguntas.put(Constantes.Perguntas.FREQUENCIA.getValor(),"Quantas vezes por mês você pratica a atividade em média?");
+        perguntas.put(Constantes.Perguntas.FREQUENCIA1.getValor(),"A atividade executada é frequente?");
+        perguntas.put(Constantes.Perguntas.FREQUENCIA2.getValor(),"Quantas vezes por mês você pratica a atividade em média?");
 
         lblPaginas.setText("1/"+perguntas.size());
 
@@ -240,6 +251,18 @@ public class CadastroActivity extends BaseActivity {
 
             }
         });
+        radioFrequenteNao.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    btnDireita.setVisibility(Button.GONE);
+                    btnFinalizar.setVisibility(Button.VISIBLE);
+                }else{
+                    btnDireita.setVisibility(Button.VISIBLE);
+                    btnFinalizar.setVisibility(Button.GONE);
+                }
+            }
+        });
     }
 
     @OnClick(R.id.btn_direita)
@@ -253,7 +276,7 @@ public class CadastroActivity extends BaseActivity {
         if(btnEsquerda.getVisibility() == (Button.GONE)){
             btnEsquerda.setVisibility(Button.VISIBLE);
         }
-        if(indexPergunta == Constantes.Perguntas.FREQUENCIA.getValor()){
+        if(indexPergunta == Constantes.Perguntas.FREQUENCIA2.getValor()){
             btnDireita.setVisibility(Button.GONE);
             btnFinalizar.setVisibility(Button.VISIBLE);
         }
@@ -282,6 +305,10 @@ public class CadastroActivity extends BaseActivity {
     @OnClick(R.id.btn_finalizar)
     public void setBtnFinalizar(){
         montarResposta();
+        if(indexPergunta == Constantes.Perguntas.FREQUENCIA1.getValor() && resposta.get(indexPergunta).equals("N")) {
+            indexPergunta++;
+        }
+
         retrofit = new RetrofitUtil().createRetrofit();
         UsuarioAtividadeInterface i  = retrofit.create(UsuarioAtividadeInterface.class);
         UsuarioAtividadeVo uaVo = new UsuarioAtividadeVo();
@@ -291,6 +318,8 @@ public class CadastroActivity extends BaseActivity {
         uaVo.setComplementos(complementosSelecionados);
         uaVo.setFrequencia(usuarioAtividade.getFrequencia());
         uaVo.setSatisfacao(usuarioAtividade.getSatisfacao());
+
+        uaVo.setResposta(resposta.values().toString());
         Call<Usuario> call = i.fuzzyficar(uaVo);
         dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
         call.enqueue(new Callback<Usuario>() {
@@ -320,32 +349,44 @@ public class CadastroActivity extends BaseActivity {
         if(indexPergunta == Constantes.Perguntas.SOCIAL.getValor()) {
             linearRadio.setVisibility(LinearLayout.GONE);
             linearSatisfacao.setVisibility(LinearLayout.GONE);
-            linearFrequencia.setVisibility(LinearLayout.GONE);
+            linearFrequencia1.setVisibility(LinearLayout.GONE);
+            linearFrequencia2.setVisibility(LinearLayout.GONE);
             linearFisica.setVisibility(LinearLayout.GONE);
             linearSocial.setVisibility(LinearLayout.VISIBLE);
         }else if(indexPergunta == Constantes.Perguntas.SAUDE2.getValor()) {
             linearRadio.setVisibility(LinearLayout.GONE);
             linearSatisfacao.setVisibility(LinearLayout.GONE);
-            linearFrequencia.setVisibility(LinearLayout.GONE);
+            linearFrequencia1.setVisibility(LinearLayout.GONE);
+            linearFrequencia2.setVisibility(LinearLayout.GONE);
             linearSocial.setVisibility(LinearLayout.GONE);
             linearFisica.setVisibility(LinearLayout.VISIBLE);
         }else if(indexPergunta == Constantes.Perguntas.SATISFACAO.getValor()){
             linearRadio.setVisibility(LinearLayout.GONE);
             linearFisica.setVisibility(LinearLayout.GONE);
             linearSatisfacao.setVisibility(LinearLayout.VISIBLE);
-            linearFrequencia.setVisibility(LinearLayout.GONE);
+            linearFrequencia1.setVisibility(LinearLayout.GONE);
+            linearFrequencia2.setVisibility(LinearLayout.GONE);
             linearSocial.setVisibility(LinearLayout.GONE);
-        }else if(indexPergunta == Constantes.Perguntas.FREQUENCIA.getValor()){
+        }else if(indexPergunta == Constantes.Perguntas.FREQUENCIA1.getValor()){
             linearRadio.setVisibility(LinearLayout.GONE);
             linearFisica.setVisibility(LinearLayout.GONE);
             linearSatisfacao.setVisibility(LinearLayout.GONE);
-            linearFrequencia.setVisibility(LinearLayout.VISIBLE);
+            linearFrequencia1.setVisibility(LinearLayout.VISIBLE);
+            linearFrequencia2.setVisibility(LinearLayout.GONE);
+            linearSocial.setVisibility(LinearLayout.GONE);
+        }else if(indexPergunta == Constantes.Perguntas.FREQUENCIA2.getValor()){
+            linearRadio.setVisibility(LinearLayout.GONE);
+            linearFisica.setVisibility(LinearLayout.GONE);
+            linearSatisfacao.setVisibility(LinearLayout.GONE);
+            linearFrequencia1.setVisibility(LinearLayout.GONE);
+            linearFrequencia2.setVisibility(LinearLayout.VISIBLE);
             linearSocial.setVisibility(LinearLayout.GONE);
         }else{
             linearRadio.setVisibility(LinearLayout.VISIBLE);
             linearFisica.setVisibility(LinearLayout.GONE);
             linearSatisfacao.setVisibility(LinearLayout.GONE);
-            linearFrequencia.setVisibility(LinearLayout.GONE);
+            linearFrequencia1.setVisibility(LinearLayout.GONE);
+            linearFrequencia2.setVisibility(LinearLayout.GONE);
             linearSocial.setVisibility(LinearLayout.GONE);
         }
     }
@@ -369,12 +410,24 @@ public class CadastroActivity extends BaseActivity {
             progress = seekBarSatisfacao.getProgress()*10;
             resposta.put(indexPergunta,progress + "");
             usuarioAtividade.setSatisfacao(progress + 0.0);
-       }else if(indexPergunta == Constantes.Perguntas.FREQUENCIA.getValor()){
-            progress = seekBarFrequencia.getProgress();
-            resposta.put(indexPergunta, progress + "");
-            usuarioAtividade.setFrequencia(progress+0.0);
+       }else if(indexPergunta == Constantes.Perguntas.FREQUENCIA1.getValor()){
+           if(radioFrequenteNao.isChecked()){
+               progress = 5;
+               resposta.put(indexPergunta, "N");
+               resposta.put(indexPergunta+1, progress + "");
+               usuarioAtividade.setFrequencia(progress+0.0);
+           }else{
+               resposta.put(indexPergunta, "S");
+           }
+       }else if(indexPergunta == Constantes.Perguntas.FREQUENCIA2.getValor()){
+           progress = seekBarFrequencia.getProgress();
+           resposta.put(indexPergunta, progress + "");
+           usuarioAtividade.setFrequencia(progress+0.0);
        }else if(indexPergunta == Constantes.Perguntas.SAUDE1.getValor()){
             resposta.put(indexPergunta,radioNao.isChecked() ? "N" : radioSim.isChecked()? "S" : "T");
+           if(radioNao.isChecked()){
+               resposta.put(indexPergunta+1,"-");
+           }
        }else {
            double pontos=0;
            if(indexPergunta == Constantes.Perguntas.SAUDE2.getValor()){
@@ -408,6 +461,15 @@ public class CadastroActivity extends BaseActivity {
                 perfil.setArtistico(perfil.getArtistico() + pontos);
             }
         }
+    }
+
+    @OnClick(R.id.radio_frequente_sim)
+    public void radioFrequenteSim(){
+        radioFrequenteNao.setChecked(false);
+    }
+    @OnClick(R.id.radio_frequente_nao)
+    public void radioFrequenteNao(){
+        radioFrequenteSim.setChecked(false);
     }
 
     @OnClick(R.id.radio_sim)

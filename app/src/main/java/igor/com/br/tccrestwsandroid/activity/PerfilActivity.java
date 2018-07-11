@@ -43,6 +43,11 @@ public class PerfilActivity extends BaseActivity {
     private Context mContext;
     private RadarChart mChart;
     private Retrofit retrofit;
+    private Double intelecto=0.0;
+    private Double social=0.0;
+    private Double saude=0.0;
+    private Double artistico=0.0;
+    private String[] mActivities = null;
 
     private Usuario usuarioLogado;
     @Override
@@ -74,6 +79,16 @@ public class PerfilActivity extends BaseActivity {
         usuarioLogado = new Gson().fromJson(json,Usuario.class);
         if(usuarioLogado != null){
             lblNome.setText(usuarioLogado.getNome());
+            if(usuarioLogado.getPerfil() != null)
+            {
+                saude=usuarioLogado.getPerfil().getSaude();
+                social=usuarioLogado.getPerfil().getSocial();
+                intelecto=usuarioLogado.getPerfil().getIntelecto();
+                artistico=usuarioLogado.getPerfil().getArtistico();
+                mActivities = new String[]{"Artistico" + " ("+ artistico.intValue() + ")", "Intelecto" + " ("+ intelecto.intValue() + ")", "Social" + " ("+ social.intValue() + ")", "Saude" + " ("+ saude.intValue() + ")"};
+            }else{
+                mActivities = new String[]{"Artistico", "Intelecto", "Social", "Saude"};
+            }
         }
         configuraRadarChart();
     }
@@ -104,9 +119,6 @@ public class PerfilActivity extends BaseActivity {
 //        xAxis.setYOffset(0f);
 //        xAxis.setXOffset(0f);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
-
-            private String[] mActivities = new String[]{"Artistico", "Intelecto", "Social", "Saude"};
-
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
                 return mActivities[(int) value % mActivities.length];
@@ -143,10 +155,10 @@ public class PerfilActivity extends BaseActivity {
         ArrayList<RadarEntry> entries1 = new ArrayList<RadarEntry>();
 
         if(usuarioLogado.getPerfil() != null) {
-            entries1.add(new RadarEntry(usuarioLogado.getPerfil().getArtistico().floatValue()));
-            entries1.add(new RadarEntry(usuarioLogado.getPerfil().getIntelecto().floatValue()));
-            entries1.add(new RadarEntry(usuarioLogado.getPerfil().getSocial().floatValue()));
-            entries1.add(new RadarEntry(usuarioLogado.getPerfil().getSaude().floatValue()));
+            entries1.add(new RadarEntry(artistico.floatValue()));
+            entries1.add(new RadarEntry(intelecto.floatValue()));
+            entries1.add(new RadarEntry(social.floatValue()));
+            entries1.add(new RadarEntry(saude.floatValue()));
         }
 
         RadarDataSet set1 = new RadarDataSet(entries1, "Perfil");

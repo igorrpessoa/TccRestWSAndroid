@@ -42,6 +42,8 @@ public class LoginActivity extends BaseActivity {
         mContext = this;
         String json = getSharedPreferences(mContext,mContext.getString(R.string.usuario_logado));
         Usuario usuarioLogado = new Gson().fromJson(json,Usuario.class);
+
+
         if(usuarioLogado != null){
             vaiParaMain();
         }
@@ -63,8 +65,8 @@ public class LoginActivity extends BaseActivity {
         u.setSenha(senha);
         retrofit = new RetrofitUtil().createRetrofit();
         UsuarioInterface i  = retrofit.create(UsuarioInterface.class);
+        dialog = ProgressDialog.show(this, "","Por favor aguarde...", false,true);
         Call<Usuario> call = i.login(u);
-        dialog = ProgressDialog.show(this, "","Por favor aguarde...", false);
         call.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
